@@ -45,7 +45,7 @@ You do not need to write code to contribute. Here are all the ways you can help:
 
 ```bash
 # Fork the repo on GitHub, then:
-git clone https://github.com/<your-username>/paylinkr.git
+git clone https://github.com/Aniekan-s-org/PayLinkr.git
 cd paylinkr
 ```
 
