@@ -7,7 +7,7 @@
 import {
   Contract,
   Networks,
-  SorobanRpc,
+  rpc,
   TransactionBuilder,
   BASE_FEE,
   nativeToScVal,
@@ -21,7 +21,7 @@ export const RPC_URL =
 export const NETWORK_PASSPHRASE =
   import.meta.env.VITE_NETWORK_PASSPHRASE ?? Networks.TESTNET;
 
-export const server = new SorobanRpc.Server(RPC_URL);
+export const server = new rpc.Server(RPC_URL);
 
 /** Build + simulate + submit a contract call */
 export async function invokeContract(
@@ -43,11 +43,11 @@ export async function invokeContract(
     .build();
 
   const simResult = await server.simulateTransaction(tx);
-  if (SorobanRpc.Api.isSimulationError(simResult)) {
+  if (rpc.Api.isSimulationError(simResult)) {
     throw new Error(simResult.error);
   }
 
-  const preparedTx = SorobanRpc.assembleTransaction(tx, simResult).build();
+  const preparedTx = rpc.assembleTransaction(tx, simResult).build();
   preparedTx.sign(kp);
 
   const sendResult = await server.sendTransaction(preparedTx);
@@ -57,12 +57,12 @@ export async function invokeContract(
 
   // poll for confirmation
   let getResult = await server.getTransaction(sendResult.hash);
-  while (getResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+  while (getResult.status === rpc.Api.GetTransactionStatus.NOT_FOUND) {
     await new Promise((r) => setTimeout(r, 1000));
     getResult = await server.getTransaction(sendResult.hash);
   }
 
-  if (getResult.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
+  if (getResult.status === rpc.Api.GetTransactionStatus.FAILED) {
     throw new Error("Transaction failed");
   }
 
@@ -86,17 +86,17 @@ export async function simulateContract(
     .build();
 
   const simResult = await server.simulateTransaction(tx);
-  if (SorobanRpc.Api.isSimulationError(simResult)) {
+  if (rpc.Api.isSimulationError(simResult)) {
     throw new Error(simResult.error);
   }
 
-  const returnVal = (simResult as SorobanRpc.Api.SimulateTransactionSuccessResult)
+  const returnVal = (simResult as rpc.Api.SimulateTransactionSuccessResponse)
     .result?.retval;
   return returnVal ? scValToNative(returnVal) : null;
 }
 
 /** Helpers to encode args */
-export const toSymbol = (env: unknown, s: string) =>
+export const toSymbol = (s: string) =>
   nativeToScVal(s, { type: "symbol" });
 
 export const toAddress = (addr: string) =>
