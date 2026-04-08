@@ -97,7 +97,7 @@ For folder-by-folder breakdown, see [docs/STRUCTURE.md](docs/STRUCTURE.md).
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/<your-org>/paylinkr.git
+git clone https://github.com/Aniekan-s-org/PayLinkr.git
 cd paylinkr
 ```
 
